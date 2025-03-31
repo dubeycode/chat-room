@@ -5,4 +5,3 @@ gevent
 gunicorn
 python-socketio
 python-engineio
-sqlite3
