@@ -17,7 +17,7 @@ def generate_unique_code(length):
             break
     return code
 
-
+# home route to create or join the chat room 
 @app.route("/",methods=["POST","GET"])
 def home():
     session.clear()
@@ -29,7 +29,7 @@ def home():
 
         if not name:
             return render_template("home.html",error="Please enter a name.",code=code,name=name)
-        if join != False and not code:
+        if join and not code:
             return render_template("home.html",error="Plese enter the room code",code=code,name=name)
 
         room = code
@@ -38,10 +38,15 @@ if create:  # Explicit check for True
     rooms[room] = {"members": 0, "messages": []}
     print(f"New room created: {room}")
 elif code not in rooms:
-  #  print(f"Room {code} does not exist in {rooms.keys()}")  # Debug output
+    print(f"Room {code} does not exist in {rooms.keys()}")  # Debug output
     return render_template("home.html", error="Room does not exist.", code=code, name=name)
+ session["room"] = room
+        session["name"] = name
+        return redirect(url_for("room"))  # Redirect to room after joining or creating
 
-    
+    return render_template("home.html")
+
+# rooma page route
 @app.route("/room")
 def room():
     room =session.get("room")
@@ -49,6 +54,7 @@ def room():
         return redirect(url_for("home"))
     return render_template("room.html",code=room, messages=rooms[room]["messages"])
 
+#hendal a new message
 @socketio.on("message")
 def message(data):
     room =session.get("room")
@@ -63,7 +69,7 @@ def message(data):
     rooms[room]["messages"].append(content)
     # print(f"{session.get('name')} said:{data['data']}")
 
-
+# hendal the user conection
 @socketio.on("connect")
 def connect(auth):
     room=session.get("room")
@@ -77,7 +83,7 @@ def connect(auth):
     send({"name":name,"message":"has enters the room"},to=room)
     rooms[room]["members"] +=1
     # print(f"{name} joined room {room}")
-
+# hendal the disconnection
 @socketio.on("disconnect")
 def disconnect():
     room=session.get("room")
