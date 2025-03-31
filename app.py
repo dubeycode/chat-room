@@ -18,31 +18,33 @@ def generate_unique_code(length):
     return code
 
 # home route to create or join the chat room 
-@app.route("/",methods=["POST","GET"])
+@app.route("/", methods=["POST", "GET"])
 def home():
     session.clear()
-    if request.method=='POST':
-        name=request.form.get("name")
-        code=request.form.get("code")
-        join=request.form.get("join",False)
-        create= request.form.get("create",False)
+    if request.method == 'POST':
+        name = request.form.get("name")
+        code = request.form.get("code")
+        join = request.form.get("join", False)
+        create = request.form.get("create", False)
 
         if not name:
-            return render_template("home.html",error="Please enter a name.",code=code,name=name)
+            return render_template("home.html", error="Please enter a name.", code=code, name=name)
         if join and not code:
-            return render_template("home.html",error="Plese enter the room code",code=code,name=name)
+            return render_template("home.html", error="Please enter the room code.", code=code, name=name)
 
-        room = code
-if create:  # Explicit check for True
-    room = generate_unique_code(4)
-    rooms[room] = {"members": 0, "messages": []}
-    print(f"New room created: {room}")
-elif code not in rooms:
-    print(f"Room {code} does not exist in {rooms.keys()}")  # Debug output
-    return render_template("home.html", error="Room does not exist.", code=code, name=name)
- session["room"] = room
- session["name"] = name
-        return redirect(url_for("room"))  # Redirect to room after joining or creating
+        room = code  # Default to the provided room code
+
+        if create:  # If user wants to create a new room
+            room = generate_unique_code(4)
+            rooms[room] = {"members": 0, "messages": []}
+            print(f"New room created: {room}")
+        elif code not in rooms:
+            print(f"Room {code} does not exist in {rooms.keys()}")  # Debug output
+            return render_template("home.html", error="Room does not exist.", code=code, name=name)
+
+        session["room"] = room
+        session["name"] = name
+        return redirect(url_for("room"))  # Redirect to the chat room
 
     return render_template("home.html")
 
