@@ -5,7 +5,7 @@ from string import ascii_uppercase
 
 app = Flask(__name__)
 app.config["SECRET_KEY"]="jkhlgfsjhd"
-socketio=SocketIO(app)
+socketio=SocketIO(app,async_mode="eventlet")
 
 rooms={}
 def generate_unique_code(length):
@@ -95,4 +95,4 @@ def disconnect():
     # print(f"{name} has left the {room} ")
 
 if __name__ =="__main__":
-    socketio.run(app,debug=True)
+    socketio.run(app,debug=True,host="0.0.0.0",port=5000)
