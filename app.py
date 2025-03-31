@@ -54,7 +54,7 @@ def home():
             room = generate_unique_code(4)
             conn = sqlite3.connect("database.db")
             cursor = conn.cursor()
-            cursor.execute("INSERT INTO rooms (code, messages) VALUES (?, ?)", (room, "[]"))
+            cursor.execute("INSERT INTO rooms (code, messages) VALUES (?, ?)" , (room, "[]"))
             conn.commit()
             conn.close()
         else:
