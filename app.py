@@ -41,7 +41,7 @@ elif code not in rooms:
     print(f"Room {code} does not exist in {rooms.keys()}")  # Debug output
     return render_template("home.html", error="Room does not exist.", code=code, name=name)
  session["room"] = room
-        session["name"] = name
+ session["name"] = name
         return redirect(url_for("room"))  # Redirect to room after joining or creating
 
     return render_template("home.html")
